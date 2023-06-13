@@ -1,0 +1,64 @@
+schemaVersion: 2.2.0
+metadata:
+  name: dotnet
+  namespace: balki404-dev
+attributes:
+  controller.devfile.io/devworkspace-config:
+    name: devworkspace-config
+    namespace: crw
+  controller.devfile.io/scc: container-build
+  controller.devfile.io/storage-type: per-user
+projects:
+  - name: dotnet-web-simple
+    zip:
+      location: https://eclipse-che.github.io/che-devfile-registry/7.67.0/resources/v2/dotnet-web-simple.zip
+components:
+  - attributes:
+      controller.devfile.io/merge-contribution: true
+    container:
+      args:
+        - tail
+        - '-f'
+        - /dev/null
+      endpoints:
+        - exposure: public
+          name: http-dotnet60
+          protocol: http
+          targetPort: 8080
+      env:
+        - name: CONFIGURATION
+          value: Debug
+        - name: STARTUP_PROJECT
+          value: app.csproj
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
+        - name: ASPNETCORE_URLS
+          value: http://*:8080
+      image: quay.io/balki404/dotnet-udi9:6.0
+      memoryLimit: 2Gi
+      mountSources: true
+      sourceMapping: /projects
+      volumeMounts:
+        - name: nuget
+          path: /home/user/.nuget
+    name: tools
+  - name: nuget
+    volume:
+      size: 1G
+commands:
+  - exec:
+      commandLine: dotnet build -c $CONFIGURATION $STARTUP_PROJECT /p:UseSharedCompilation=false
+      component: tools
+      group:
+        kind: build
+      label: Build
+      workingDir: ${PROJECTS_ROOT}/dotnet-web-simple
+    id: build
+  - exec:
+      commandLine: dotnet run -c $CONFIGURATION --no-build --project $STARTUP_PROJECT --no-launch-profile
+      component: tools
+      group:
+        kind: run
+      label: Run
+      workingDir: ${PROJECTS_ROOT}/dotnet-web-simple
+    id: run
