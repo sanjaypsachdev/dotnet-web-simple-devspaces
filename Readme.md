@@ -5,4 +5,4 @@ It is a simple dotnet web application which uses `net6.0` as a target framework.
  
 # Application Output
 
-The app will print `Hello World!`
+The app will present a simple web page 
