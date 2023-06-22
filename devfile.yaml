@@ -23,7 +23,7 @@ components:
       endpoints:
         - exposure: public
           name: http-dotnet60
-          protocol: http
+          protocol: https
           targetPort: 8080
       env:
         - name: CONFIGURATION
