@@ -1,6 +1,5 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
-using OpenTelemetry.Logs;
 using OpenTelemetry.Exporter.Console;
 
 var builder = WebApplication.CreateBuilder(args);
