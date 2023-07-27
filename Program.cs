@@ -32,22 +32,33 @@ app.MapControllerRoute(
 
 app.Logger.LogInformation("Starting the app");
 
-var serviceProvider = new ServiceCollection()
-    .AddLogging((loggingBuilder) => loggingBuilder
-        .SetMinimumLevel(LogLevel.Debug)
-        .AddOpenTelemetry(options =>
+appBuilder.Logging.AddOpenTelemetry(options =>
+{
+    // Note: See appsettings.json Logging:OpenTelemetry section for configuration.
+
             options.AddOtlpExporter(otlpOptions =>
             {
                 // Use IConfiguration directly for Otlp exporter endpoint option.
                 otlpOptions.Endpoint = new Uri(appBuilder.Configuration.GetValue<string>("Otlp:Endpoint"));
-            })
-        )
-    .BuildServiceProvider();
+            });
+});
 
-var logger = serviceProvider.GetRequiredService<ILoggerFactory>().CreateLogger<Program>();
+// var serviceProvider = new ServiceCollection()
+//     .AddLogging((loggingBuilder) => loggingBuilder
+//         .SetMinimumLevel(LogLevel.Debug)
+//         .AddOpenTelemetry(options =>
+//             options.AddOtlpExporter(otlpOptions =>
+//             {
+//                 // Use IConfiguration directly for Otlp exporter endpoint option.
+//                 otlpOptions.Endpoint = new Uri(appBuilder.Configuration.GetValue<string>("Otlp:Endpoint"));
+//             })
+//         )
+//     .BuildServiceProvider();
 
-logger.LogDebug("This is a {severityLevel} message", LogLevel.Debug);
-logger.LogInformation("{severityLevel} messages are used to provide contextual information", LogLevel.Information);
-logger.LogError(new Exception("Application exception"), "These are usually accompanied by an exception");
+// var logger = serviceProvider.GetRequiredService<ILoggerFactory>().CreateLogger<Program>();
+
+// logger.LogDebug("This is a {severityLevel} message", LogLevel.Debug);
+// logger.LogInformation("{severityLevel} messages are used to provide contextual information", LogLevel.Information);
+// logger.LogError(new Exception("Application exception"), "These are usually accompanied by an exception");
 
 app.Run();
