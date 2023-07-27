@@ -51,8 +51,8 @@ using var loggerFactory = LoggerFactory.Create(builder =>
 
 var logger = loggerFactory.CreateLogger<Program>();
 
-logger.LogDebug("This is a {severityLevel} message", LogLevel.Debug);
-logger.LogInformation("{severityLevel} messages are used to provide contextual information", LogLevel.Information);
-logger.LogError(new Exception("Application exception"), "These are usually accompanied by an exception");
+logger.LogDebug("This is a debug message from dotnet-web-simple", LogLevel.Debug);
+logger.LogInformation("Information messages from dotnet-web-simple are used to provide contextual information", LogLevel.Information);
+logger.LogError(new Exception("Application exception"), "dotnet-web-simple ==> These are usually accompanied by an exception");
 
 app.Run();
