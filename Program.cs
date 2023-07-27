@@ -20,8 +20,12 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+app.Logger.LogInformation("Adding Routes");
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.Logger.LogInformation("Starting the app");
 
 app.Run();
