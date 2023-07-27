@@ -36,7 +36,11 @@ var serviceProvider = new ServiceCollection()
     .AddLogging((loggingBuilder) => loggingBuilder
         .SetMinimumLevel(LogLevel.Debug)
         .AddOpenTelemetry(options =>
-            options.AddConsoleExporter())
+            options.options.AddOtlpExporter(otlpOptions =>
+            {
+                // Use IConfiguration directly for Otlp exporter endpoint option.
+                otlpOptions.Endpoint = new Uri(appBuilder.Configuration.GetValue<string>("Otlp:Endpoint"));
+            })
         )
     .BuildServiceProvider();
 
