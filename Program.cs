@@ -1,6 +1,8 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
-using OpenTelemetry.Exporter.Console;
+using OpenTelemetry;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Resources;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,33 +34,25 @@ app.MapControllerRoute(
 
 app.Logger.LogInformation("Starting the app");
 
-appBuilder.Logging.AddOpenTelemetry(options =>
-{
-    // Note: See appsettings.json Logging:OpenTelemetry section for configuration.
+var appResourceBuilder = ResourceBuilder.CreateDefault()
+    .AddService("dotnet-web-simple", "1.0");
 
-            options.AddOtlpExporter(otlpOptions =>
-            {
-                // Use IConfiguration directly for Otlp exporter endpoint option.
-                otlpOptions.Endpoint = new Uri(appBuilder.Configuration.GetValue<string>("Otlp:Endpoint"));
-            });
+using var loggerFactory = LoggerFactory.Create(builder =>
+{
+    builder.AddOpenTelemetry(options =>
+    {
+        options.SetResourceBuilder(appResourceBuilder);
+        options.AddOtlpExporter(option =>
+        {
+            option.Endpoint = new Uri("http://otel-collector.otel.svc.cluster.local:4317");
+]        });
+    });
 });
 
-// var serviceProvider = new ServiceCollection()
-//     .AddLogging((loggingBuilder) => loggingBuilder
-//         .SetMinimumLevel(LogLevel.Debug)
-//         .AddOpenTelemetry(options =>
-//             options.AddOtlpExporter(otlpOptions =>
-//             {
-//                 // Use IConfiguration directly for Otlp exporter endpoint option.
-//                 otlpOptions.Endpoint = new Uri(appBuilder.Configuration.GetValue<string>("Otlp:Endpoint"));
-//             })
-//         )
-//     .BuildServiceProvider();
+var logger = loggerFactory.CreateLogger<Program>();
 
-// var logger = serviceProvider.GetRequiredService<ILoggerFactory>().CreateLogger<Program>();
-
-// logger.LogDebug("This is a {severityLevel} message", LogLevel.Debug);
-// logger.LogInformation("{severityLevel} messages are used to provide contextual information", LogLevel.Information);
-// logger.LogError(new Exception("Application exception"), "These are usually accompanied by an exception");
+logger.LogDebug("This is a {severityLevel} message", LogLevel.Debug);
+logger.LogInformation("{severityLevel} messages are used to provide contextual information", LogLevel.Information);
+logger.LogError(new Exception("Application exception"), "These are usually accompanied by an exception");
 
 app.Run();
