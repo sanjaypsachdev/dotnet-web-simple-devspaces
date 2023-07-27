@@ -1,3 +1,8 @@
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Exporter.Console;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -27,5 +32,19 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Logger.LogInformation("Starting the app");
+
+var serviceProvider = new ServiceCollection()
+    .AddLogging((loggingBuilder) => loggingBuilder
+        .SetMinimumLevel(LogLevel.Debug)
+        .AddOpenTelemetry(options =>
+            options.AddConsoleExporter())
+        )
+    .BuildServiceProvider();
+
+var logger = serviceProvider.GetRequiredService<ILoggerFactory>().CreateLogger<Program>();
+
+logger.LogDebug("This is a {severityLevel} message", LogLevel.Debug);
+logger.LogInformation("{severityLevel} messages are used to provide contextual information", LogLevel.Information);
+logger.LogError(new Exception("Application exception"), "These are usually accompanied by an exception");
 
 app.Run();
