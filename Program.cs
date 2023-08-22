@@ -44,7 +44,7 @@ using var loggerFactory = LoggerFactory.Create(builder =>
         options.SetResourceBuilder(appResourceBuilder);
         options.AddOtlpExporter(option =>
         {
-            option.Endpoint = new Uri("http://my-otel-collector.otel.svc.cluster.local:4317");
+            option.Endpoint = new Uri("http://my-otelcol-collector.otel.svc.cluster.local:4317");
         });
     });
 });
