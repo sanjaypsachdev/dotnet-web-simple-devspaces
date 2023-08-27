@@ -44,7 +44,7 @@ using var loggerFactory = LoggerFactory.Create(builder =>
         options.SetResourceBuilder(appResourceBuilder);
         options.AddOtlpExporter(option =>
         {
-            var otel_collector_endpoint = System.Environment.SetEnvironmentVariable("OTEL_COLLECTOR_ENDPOINT");
+            var otel_collector_endpoint = System.Environment.GetEnvironmentVariable("OTEL_COLLECTOR_ENDPOINT");
             option.Endpoint = new Uri(otel_collector_endpoint);
         });
     });
