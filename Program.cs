@@ -1,10 +1,7 @@
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Console;
-using OpenTelemetry;
-using OpenTelemetry.Logs;
-using OpenTelemetry.Resources;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Resources;
 using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
